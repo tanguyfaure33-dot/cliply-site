@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliply — Smart Video Publishing & Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --cream: #ede9e3;
+    --accent: #c8f04d;
+    --muted: #6b6560;
+    --border: rgba(10,10,10,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,10,0.7);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+  nav ul { list-style: none; display: flex; gap: 36px; }
+  nav ul a { color: rgba(245,242,238,0.6); text-decoration: none; font-size: 14px; transition: color .2s; }
+  nav ul a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--accent); color: var(--black);
+    padding: 9px 20px; border-radius: 40px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,240,77,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(200,240,77,0.06) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(200,240,77,0.3);
+    background: rgba(200,240,77,0.07);
+    color: var(--accent);
+    padding: 6px 16px; border-radius: 40px;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 32px;
+    position: relative; z-index: 1;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(20px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 1.0;
+    letter-spacing: -2px;
+    color: var(--white);
+    max-width: 800px;
+    position: relative; z-index: 1;
+    animation: fadeUp .6s .1s ease both;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .hero-sub {
+    font-size: 18px; color: rgba(245,242,238,0.55);
+    max-width: 500px; margin: 24px auto 0;
+    position: relative; z-index: 1;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .hero-actions {
+    display: flex; gap: 14px; margin-top: 44px;
+    position: relative; z-index: 1;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--black);
+    padding: 14px 32px; border-radius: 40px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    transition: transform .2s, opacity .2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+  .btn-secondary {
+    background: rgba(255,255,255,0.07); color: var(--white);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 14px 32px; border-radius: 40px;
+    font-size: 15px; text-decoration: none;
+    transition: background .2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex; justify-content: center; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+  }
+  .stat { flex: 1; max-width: 240px; text-align: center; padding: 32px 20px; border-right: 1px solid rgba(255,255,255,0.06); }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* FEATURES */
+  section { padding: 100px 48px; }
+  .section-label {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.1; letter-spacing: -1px; color: var(--white);
+    max-width: 600px;
+  }
+  .section-title em { font-style: italic; }
+
+  .features-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; overflow: hidden;
+    margin-top: 60px;
+  }
+  .feature-card {
+    background: var(--black); padding: 40px 36px;
+    transition: background .2s;
+  }
+  .feature-card:hover { background: rgba(255,255,255,0.03); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(200,240,77,0.1);
+    border: 1px solid rgba(200,240,77,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 20px;
+  }
+  .feature-title { font-size: 17px; font-weight: 500; color: var(--white); margin-bottom: 10px; }
+  .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+  /* HOW IT WORKS */
+  .how { background: rgba(255,255,255,0.02); }
+  .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 60px; }
+  .step { position: relative; }
+  .step-num {
+    font-family: 'DM Serif Display', serif; font-size: 64px;
+    color: rgba(200,240,77,0.15); line-height: 1; margin-bottom: 16px;
+  }
+  .step-title { font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: var(--muted); }
+
+  /* FOOTER LEGAL LINKS */
+  .legal-bar {
+    display: flex; justify-content: center; gap: 32px;
+    padding: 20px 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+  .legal-bar a { color: rgba(245,242,238,0.5); text-decoration: none; transition: color .2s; }
+  .legal-bar a:hover { color: var(--white); }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 48px 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'DM Serif Display', serif; font-size: 20px;
+    color: var(--white); text-decoration: none;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-copy { font-size: 13px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .footer-links a:hover { color: var(--white); }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    nav ul { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .stats-bar { flex-wrap: wrap; }
+    section { padding: 60px 20px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">Clip<span>ly</span></a>
+  <ul>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+  </ul>
+  <a class="nav-cta" href="#features">Get started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">Now live — TikTok API integration</div>
+  <h1>Publish smarter.<br><em>Grow faster.</em></h1>
+  <p class="hero-sub">Cliply automates your TikTok publishing and gives you deep analytics — all in one professional dashboard.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#features">Explore features</a>
+    <a class="btn-secondary" href="#how">How it works</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">10k+</div><div class="stat-label">Videos published</div></div>
+  <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Uptime</div></div>
+  <div class="stat"><div class="stat-num">3x</div><div class="stat-label">Average reach increase</div></div>
+  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Automated posting</div></div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">What we offer</div>
+  <h2 class="section-title">Everything you need to <em>dominate</em> TikTok</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-title">Smart Scheduling</div>
+      <div class="feature-desc">Schedule videos at the perfect time for your audience. Our AI finds the optimal posting windows automatically.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">Deep Analytics</div>
+      <div class="feature-desc">Track views, engagement, follower growth and revenue in real-time. Understand what works and why.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">AI Automation</div>
+      <div class="feature-desc">Let Cliply handle publishing entirely. Set it up once and let the bot take care of everything else.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-title">TikTok API</div>
+      <div class="feature-desc">Built on official TikTok APIs. Fully compliant, secure, and always up to date with platform changes.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">Growth Insights</div>
+      <div class="feature-desc">Identify your top-performing content and replicate success with actionable recommendations.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Instant Publishing</div>
+      <div class="feature-desc">Upload once, publish instantly or on a schedule. Batch processing for multiple videos at once.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <div class="section-label">Simple process</div>
+  <h2 class="section-title">From upload to <em>viral</em> in 4 steps</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><div class="step-title">Connect your account</div><div class="step-desc">Link your TikTok account securely via official OAuth in seconds.</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-title">Upload your videos</div><div class="step-desc">Batch upload your content and add captions, hashtags and cover images.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-title">Set your schedule</div><div class="step-desc">Choose posting times manually or let our AI pick the best moments for your audience.</div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-title">Track & grow</div><div class="step-desc">Monitor performance in real-time and use insights to optimise your content strategy.</div></div>
+  </div>
+</section>
+
+<!-- LEGAL BAR -->
+<div class="legal-bar">
+  <a href="terms.html">Terms of Service</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="mailto:hello@cliply.io">Contact</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a class="footer-logo" href="/">Clip<span>ly</span></a>
+  <span class="footer-copy">© 2024 Cliply. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+</footer>
+
+</body>
+</html>
